@@ -8,10 +8,14 @@ const App = () => {
   const [lockedType, setLockedType] = createSignal<SunEventType | null>(null);
   const [error, setError] = createSignal<string | null>(null);
 
-  onMount(() => {
-    const interval = setInterval(() => setNow(new Date()), 60000);
+  const requestLocation = () => {
+    if (!window.isSecureContext && window.location.hostname !== 'localhost') {
+      setError("Secure connection (HTTPS) required.");
+      return;
+    }
     
     if ("geolocation" in navigator) {
+      setError(null);
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setCoords({
@@ -20,17 +24,29 @@ const App = () => {
           });
         },
         (err) => {
-          setError("Location access required for sun data.");
+          let msg = "Location access required.";
+          if (err.code === 1) msg = "Location denied. Please enable in settings.";
+          else if (err.code === 2) msg = "Position unavailable.";
+          else if (err.code === 3) msg = "Request timed out.";
+          setError(msg);
           console.error(err);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
         }
       );
     } else {
       setError("Geolocation not supported.");
     }
+  };
 
+  onMount(() => {
+    const interval = setInterval(() => setNow(new Date()), 60000);
+    setTimeout(requestLocation, 500);
     return () => clearInterval(interval);
   });
-
   const getEventTime = (lat: number, lng: number, date: Date, type: SunEventType) => {
     const times = getSunTimes(lat, lng, date);
     return type === 'sunrise' ? times.sunrise : times.sunset;
@@ -95,9 +111,17 @@ const App = () => {
     >
       <div class="flex-1 flex flex-col items-center justify-center p-8 text-center">
         <Show when={coords()} fallback={
-          <p class="text-xl font-extralight opacity-60 animate-pulse">
-            {error() || "Waiting for your location..."}
-          </p>
+          <div class="flex flex-col items-center gap-6">
+            <p class="text-xl font-extralight opacity-60 animate-pulse">
+              {error() || "Waiting for your location..."}
+            </p>
+            <button 
+              onClick={requestLocation}
+              class="px-8 py-3 border border-white/20 rounded-full text-[10px] uppercase tracking-[0.4em] hover:bg-white/10 active:scale-95 transition-all"
+            >
+              {error() ? "Try Again" : "Enable Location"}
+            </button>
+          </div>
         }>
           <button 
             class="group relative outline-none focus:outline-none cursor-pointer"
