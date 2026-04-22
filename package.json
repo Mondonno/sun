@@ -1,0 +1,28 @@
+{
+  "name": "sun",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@types/suncalc": "^1.9.2",
+    "lucide-solid": "^1.8.0",
+    "solid-js": "^1.9.12",
+    "suncalc": "^1.9.0",
+    "vite-plugin-pwa": "^1.2.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.4",
+    "@types/node": "^24.12.2",
+    "autoprefixer": "^10.5.0",
+    "postcss": "^8.5.10",
+    "tailwindcss": "^4.2.4",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.9",
+    "vite-plugin-solid": "^2.11.12"
+  }
+}

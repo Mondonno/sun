@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply m-0 p-0 font-sans antialiased overflow-hidden select-none touch-none;
+  }
+}
+
+:root {
+  --app-height: 100%;
+}
+
+html, body, #root {
+  height: var(--app-height);
+  width: 100%;
+}
