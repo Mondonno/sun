@@ -1,5 +1,5 @@
 import { createSignal, onMount, Show } from 'solid-js';
-import { Lock, Unlock } from 'lucide-solid';
+import { Lock, Unlock, RotateCcw } from 'lucide-solid';
 import { getClosestEvent, getRelativeTimeString, type SunEventType, getSunTimes } from './utils/sun';
 
 const App = () => {
@@ -44,7 +44,7 @@ const App = () => {
     const closest = getClosestEvent(c.lat, c.lng, t);
     const lock = lockedType();
 
-    if (lock && closest.type !== lock) {
+    if (lock) {
       const events = [
         { type: lock, time: getEventTime(c.lat, c.lng, new Date(t.getTime() - 24*60*60*1000), lock) },
         { type: lock, time: getEventTime(c.lat, c.lng, t, lock) },
@@ -66,10 +66,16 @@ const App = () => {
     return closest;
   };
 
-  const toggleLock = () => {
+  const toggleView = () => {
     const current = currentDisplay();
     if (!current) return;
-    setLockedType(lockedType() ? null : current.type);
+    const nextType: SunEventType = current.type === 'sunrise' ? 'sunset' : 'sunrise';
+    setLockedType(nextType);
+  };
+
+  const clearLock = (e: MouseEvent) => {
+    e.stopPropagation();
+    setLockedType(null);
   };
 
   const bgColorClass = () => {
@@ -94,29 +100,39 @@ const App = () => {
           </p>
         }>
           <button 
-            class="group relative outline-none focus:outline-none"
-            onClick={toggleLock}
+            class="group relative outline-none focus:outline-none cursor-pointer"
+            onClick={toggleView}
+            title="Switch View & Lock"
           >
             <h1 class="text-6xl md:text-8xl font-extralight tracking-tighter mb-4 transition-transform group-active:scale-95">
               {getRelativeTimeString(currentDisplay()?.diffMs || 0)}
             </h1>
-            <p class="text-xl md:text-2xl font-extralight opacity-70 uppercase tracking-[0.3em]">
+            <p class="text-xl md:text-2xl font-extralight opacity-70 uppercase tracking-[0.3em] flex items-center justify-center gap-4">
               {currentDisplay()?.type}
             </p>
             
             <div class="absolute -right-16 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-40 transition-opacity">
-              {lockedType() ? <Lock size={24} stroke-width={1} /> : <Unlock size={24} stroke-width={1} />}
+              <RotateCcw size={24} stroke-width={1} />
             </div>
           </button>
         </Show>
       </div>
 
-      <div class="pb-16 flex flex-col items-center gap-6">
-        <Show when={lockedType()}>
-          <div class="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] opacity-40">
+      <div class="pb-16 flex flex-col items-center gap-8">
+        <Show when={lockedType()} fallback={
+          <div class="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] opacity-20">
+            <Unlock size={10} stroke-width={1} />
+            <span>Auto Switching</span>
+          </div>
+        }>
+          <button 
+            onClick={clearLock}
+            class="flex items-center gap-2 text-[10px] uppercase tracking-[0.4em] opacity-40 hover:opacity-100 transition-opacity cursor-pointer group"
+          >
             <Lock size={10} stroke-width={1} />
             <span>Locked</span>
-          </div>
+            <span class="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">(Unlock)</span>
+          </button>
         </Show>
         
         <div class="text-[10px] font-mono opacity-30 tracking-[0.5em] uppercase">
