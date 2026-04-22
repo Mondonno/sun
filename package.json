@@ -25,7 +25,10 @@
     "postcss": "^8.5.10",
     "tailwindcss": "^4.2.4",
     "typescript": "~6.0.2",
-    "vite": "^8.0.9",
+    "vite": "^7.3.2",
     "vite-plugin-solid": "^2.11.12"
+  },
+  "overrides": {
+    "serialize-javascript": "^7.0.5"
   }
 }
