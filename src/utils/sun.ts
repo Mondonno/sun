@@ -39,16 +39,17 @@ export interface ClosestEvent {
 export function getClosestEvent(lat: number, lng: number, now: Date): ClosestEvent {
   const today = getSunTimes(lat, lng, now);
   const tomorrow = getSunTimes(lat, lng, new Date(now.getTime() + 24 * 60 * 60 * 1000));
-  const yesterday = getSunTimes(lat, lng, new Date(now.getTime() - 24 * 60 * 60 * 1000));
 
   const events: { type: SunEventType; time: Date }[] = [
-    { type: 'sunrise', time: yesterday.sunrise },
-    { type: 'sunset', time: yesterday.sunset },
     { type: 'sunrise', time: today.sunrise },
     { type: 'sunset', time: today.sunset },
     { type: 'sunrise', time: tomorrow.sunrise },
     { type: 'sunset', time: tomorrow.sunset },
-  ];
+  ].filter(e => !isNaN(e.time.getTime()));
+
+  if (events.length === 0) {
+    throw new Error('No sun events found for this location.');
+  }
 
   let closest = events[0];
   let minDiff = Math.abs(now.getTime() - closest.time.getTime());

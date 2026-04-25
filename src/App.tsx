@@ -62,11 +62,12 @@ const App = () => {
 
     if (lock) {
       const events = [
-        { type: lock, time: getEventTime(c.lat, c.lng, new Date(t.getTime() - 24*60*60*1000), lock) },
         { type: lock, time: getEventTime(c.lat, c.lng, t, lock) },
         { type: lock, time: getEventTime(c.lat, c.lng, new Date(t.getTime() + 24*60*60*1000), lock) },
-      ];
+      ].filter(e => !isNaN(e.time.getTime()));
       
+      if (events.length === 0) return null;
+
       let best = events[0];
       let minDiff = Math.abs(t.getTime() - best.time.getTime());
       for (const e of events) {
