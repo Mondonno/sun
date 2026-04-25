@@ -114,11 +114,13 @@ const App = () => {
     if (!current) return;
     const nextType: SunEventType = current.type === 'sunrise' ? 'sunset' : 'sunrise';
     setLockedType(nextType);
+    incrementInteraction();
   };
 
   const clearLock = (e: MouseEvent) => {
     e.stopPropagation();
     setLockedType(null);
+    incrementInteraction();
   };
 
   const bgColorStyle = () => {
@@ -147,6 +149,12 @@ const App = () => {
     const newSettings = { ...settings(), [key]: value };
     setSettings(newSettings);
     await saveSettings(newSettings);
+  };
+
+  const incrementInteraction = async () => {
+    if (settings().isPro) return;
+    const currentCount = (settings() as ExtendedProSettings).interactionCount || 0;
+    await updateSetting('interactionCount', currentCount + 1);
   };
 
   const uiStyle = () => {
@@ -222,6 +230,15 @@ const App = () => {
             <Lock size={10} stroke-width={1} />
             <span>Locked</span>
             <span class="ml-2 opacity-0 group-hover:opacity-100 transition-opacity">(Unlock)</span>
+          </button>
+        </Show>
+        
+        <Show when={!settings().isPro && ((settings() as ExtendedProSettings).interactionCount || 0) >= 5}>
+          <button 
+            onClick={() => setShowSettings(true)}
+            class="text-[10px] uppercase tracking-[0.4em] text-yellow-400/60 hover:text-yellow-400 animate-pulse transition-colors cursor-pointer"
+          >
+            Unlock Pro Features
           </button>
         </Show>
         

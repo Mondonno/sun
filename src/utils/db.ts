@@ -4,6 +4,7 @@ export interface ProSettings {
   sunsetWallpaper?: string;
   fontFamily?: string;
   themeColor?: string;
+  interactionCount?: number;
 }
 
 const DB_NAME = 'SunProDB';
