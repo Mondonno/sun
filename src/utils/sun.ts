@@ -41,10 +41,10 @@ export function getClosestEvent(lat: number, lng: number, now: Date): ClosestEve
   const tomorrow = getSunTimes(lat, lng, new Date(now.getTime() + 24 * 60 * 60 * 1000));
 
   const events: { type: SunEventType; time: Date }[] = [
-    { type: 'sunrise', time: today.sunrise },
-    { type: 'sunset', time: today.sunset },
-    { type: 'sunrise', time: tomorrow.sunrise },
-    { type: 'sunset', time: tomorrow.sunset },
+    { type: 'sunrise' as SunEventType, time: today.sunrise },
+    { type: 'sunset' as SunEventType, time: today.sunset },
+    { type: 'sunrise' as SunEventType, time: tomorrow.sunrise },
+    { type: 'sunset' as SunEventType, time: tomorrow.sunset },
   ].filter(e => !isNaN(e.time.getTime()));
 
   if (events.length === 0) {

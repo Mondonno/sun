@@ -1,0 +1,9 @@
+The goal should be to not annoyingly convert the most amount of users to Pro version that costs 9,99 USD
+
+first of all the stripe payment link https://buy.stripe.com/9B6aEY9dVf5o54Fdmba3u06 ->
+-> redirect to https://sun.mikolajmocek/payment-success
+-> unlock the features using local flag indexeddb 
+-> if someone wants to restore their purchase I will just provide contact email
+-> mark the user as "Pro" subscriber.
+
+The features that the Pro version will unlock is the ability to choose custom wallpaper for sunrise and sunset and also custom fonts and custom look.
